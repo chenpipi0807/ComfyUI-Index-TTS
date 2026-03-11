@@ -44,7 +44,7 @@ from transformers.configuration_utils import PretrainedConfig
 from transformers.dynamic_module_utils import custom_object_save
 from transformers.generation import GenerationConfig
 import transformers
-from indextts.gpt.transformers_generation_utils import GenerationMixin
+from .transformers_generation_utils import GenerationMixin
 from transformers.generation import GenerationConfig
 
 

@@ -11,13 +11,13 @@ import torchaudio
 from typing import List, Tuple, Optional, Dict, Any, Union
 from pathlib import Path
 
-# 确保当前目录在导入路径中
-current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.append(current_dir)
+# # 确保当前目录在导入路径中
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# if current_dir not in sys.path:
+#     sys.path.append(current_dir)
 
 # 导入官方IndexTTS实现
-from indextts.infer import IndexTTS
+from .indextts.infer import IndexTTS
 
 
 class IndexTTSModel:
@@ -122,17 +122,17 @@ class IndexTTSModel:
         start_time = time.time()
         
         try:
-            # 确保可以访问到indextts模块
-            indextts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'indextts')
-            if indextts_path not in sys.path and os.path.exists(indextts_path):
-                print(f"[IndexTTS-Model] 将{indextts_path}添加到sys.path")
-                sys.path.append(indextts_path)
+            # # 确保可以访问到indextts模块
+            # indextts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'indextts')
+            # if indextts_path not in sys.path and os.path.exists(indextts_path):
+            #     print(f"[IndexTTS-Model] 将{indextts_path}添加到sys.path")
+            #     sys.path.append(indextts_path)
                 
             # 确保可以访问到父目录
-            parent_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            if parent_path not in sys.path:
-                print(f"[IndexTTS-Model] 将{parent_path}添加到sys.path")
-                sys.path.append(parent_path)
+            # parent_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            # if parent_path not in sys.path:
+            #     print(f"[IndexTTS-Model] 将{parent_path}添加到sys.path")
+            #     sys.path.append(parent_path)
             
             # 使用设备
             device = self.device

@@ -13,10 +13,10 @@ import glob
 from pathlib import Path
 import folder_paths
 
-# 获取当前目录
+# # 获取当前目录
 current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.append(current_dir)
+# if current_dir not in sys.path:
+#     sys.path.append(current_dir)
 
 # 直接使用torchaudio功能，不再导入额外函数
 

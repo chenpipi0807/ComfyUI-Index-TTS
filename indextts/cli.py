@@ -54,7 +54,7 @@ def main():
             args.fp16 = False # Disable FP16 on CPU
             print("WARNING: Running on CPU may be slow.")
 
-    from indextts.infer import IndexTTS
+    from .infer import IndexTTS
     tts = IndexTTS(cfg_path=args.config, model_dir=args.model_dir, is_fp16=args.fp16, device=args.device)
     tts.infer(audio_prompt=args.voice, text=args.text.strip(), output_path=output_path)
 

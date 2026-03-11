@@ -12,15 +12,15 @@ from pathlib import Path
 import re
 from typing import Dict, List, Optional, Tuple, Union
 
-# 保证路径正确 - 使用ComfyUI标准导入方式
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-root_dir = os.path.dirname(parent_dir)
+# # 保证路径正确 - 使用ComfyUI标准导入方式
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# parent_dir = os.path.dirname(current_dir)
+# root_dir = os.path.dirname(parent_dir)
 
-# 添加到sys.path
-for path in [current_dir, parent_dir, root_dir]:
-    if path not in sys.path:
-        sys.path.append(path)
+# # 添加到sys.path
+# for path in [current_dir, parent_dir, root_dir]:
+#     if path not in sys.path:
+#         sys.path.append(path)
 
 # 导入ComfyUI路径模块
 import folder_paths

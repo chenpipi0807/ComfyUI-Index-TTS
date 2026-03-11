@@ -8,9 +8,9 @@ import torch  # noqa: F401
 import torch.nn as nn
 import torch.nn.functional as F
 
-from indextts.BigVGAN.nnet.CNN import Conv1d as _Conv1d
-from indextts.BigVGAN.nnet.linear import Linear
-from indextts.BigVGAN.nnet.normalization import BatchNorm1d as _BatchNorm1d
+from .nnet.CNN import Conv1d as _Conv1d
+from .nnet.linear import Linear
+from .nnet.normalization import BatchNorm1d as _BatchNorm1d
 
 
 def length_to_mask(length, max_len=None, dtype=None, device=None):

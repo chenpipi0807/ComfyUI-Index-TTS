@@ -6,18 +6,18 @@ import torch.nn.functional as F
 
 import transformers
 from transformers import GPT2Config, LogitsProcessorList
-from indextts.gpt.transformers_gpt2 import GPT2PreTrainedModel, GPT2Model
-from indextts.gpt.transformers_generation_utils import GenerationMixin
+from .transformers_gpt2 import GPT2PreTrainedModel, GPT2Model
+from .transformers_generation_utils import GenerationMixin
 
 # from transformers import GPT2Config, GPT2PreTrainedModel, LogitsProcessorList
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 from transformers.utils.model_parallel_utils import (assert_device_map,
                                                      get_device_map)
 
-from indextts.gpt.conformer_encoder import ConformerEncoder
-from indextts.gpt.perceiver import PerceiverResampler
-from indextts.utils.arch_util import AttentionBlock
-from indextts.utils.typical_sampling import TypicalLogitsWarper
+from .conformer_encoder import ConformerEncoder
+from .perceiver import PerceiverResampler
+from ..utils.arch_util import AttentionBlock
+from ..utils.typical_sampling import TypicalLogitsWarper
 
 
 def null_position_embeddings(range, dim):

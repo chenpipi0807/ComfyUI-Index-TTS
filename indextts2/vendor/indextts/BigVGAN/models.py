@@ -9,10 +9,10 @@ import torch.nn.functional as F
 from torch.nn import Conv1d, Conv2d, ConvTranspose1d
 from torch.nn.utils import remove_weight_norm, spectral_norm, weight_norm
 
-import indextts.BigVGAN.activations as activations
+from . import activations
 
-from indextts.BigVGAN.ECAPA_TDNN import ECAPA_TDNN
-from indextts.BigVGAN.utils import get_padding, init_weights
+from .ECAPA_TDNN import ECAPA_TDNN
+from .utils import get_padding, init_weights
 
 LRELU_SLOPE = 0.1
 
@@ -44,9 +44,9 @@ class AMPBlock1(torch.nn.Module):
 
         self.num_layers = len(self.convs1) + len(self.convs2)  # total number of conv layers
         if self.h.get("use_cuda_kernel", False):
-            from indextts.BigVGAN.alias_free_activation.cuda.activation1d import Activation1d
+            from .alias_free_activation.cuda.activation1d import Activation1d
         else:
-            from indextts.BigVGAN.alias_free_torch import Activation1d
+            from .alias_free_torch import Activation1d
         if activation == 'snake':  # periodic nonlinearity with snake function and anti-aliasing
             self.activations = nn.ModuleList([
                 Activation1d(
@@ -95,9 +95,9 @@ class AMPBlock2(torch.nn.Module):
 
         self.num_layers = len(self.convs)  # total number of conv layers
         if self.h.get("use_cuda_kernel", False):
-            from indextts.BigVGAN.alias_free_activation.cuda.activation1d import Activation1d
+            from .alias_free_activation.cuda.activation1d import Activation1d
         else:
-            from indextts.BigVGAN.alias_free_torch import Activation1d
+            from .alias_free_torch import Activation1d
 
         if activation == 'snake':  # periodic nonlinearity with snake function and anti-aliasing
             self.activations = nn.ModuleList([
@@ -167,9 +167,9 @@ class BigVGAN(torch.nn.Module):
             for j, (k, d) in enumerate(zip(h.resblock_kernel_sizes, h.resblock_dilation_sizes)):
                 self.resblocks.append(resblock(self.h, ch, k, d, activation=h.activation))
         if use_cuda_kernel:
-            from indextts.BigVGAN.alias_free_activation.cuda.activation1d import Activation1d
+            from .alias_free_activation.cuda.activation1d import Activation1d
         else:
-            from indextts.BigVGAN.alias_free_torch import Activation1d
+            from .alias_free_torch import Activation1d
 
         # post conv
         if h.activation == "snake":  # periodic nonlinearity with snake function and anti-aliasing

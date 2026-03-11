@@ -8,10 +8,10 @@ import soundfile as sf
 import time
 from pathlib import Path
 
-# 确保当前目录在导入路径中
-current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.append(current_dir)
+# # 确保当前目录在导入路径中
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# if current_dir not in sys.path:
+#     sys.path.append(current_dir)
 
 # 导入TTS模型
 from .tts_models import IndexTTSModel
@@ -431,7 +431,8 @@ class IndexTTSNode:
                     
                 except Exception as e:
                     print(f"[IndexTTS] 生成SimplifiedSubtitle失败: {e}")
-                    simplified_subtitle_str = f">> 0:00.000-{self._seconds_to_time_format(total_duration)}\n>> {text}"
+                    # simplified_subtitle_str = f">> 0:00.000-{self._seconds_to_time_format(total_duration)}\n>> {text}"
+                    raise e
                 
                 return (audio_dict, seed, simplified_subtitle_str)
             else:
@@ -439,26 +440,26 @@ class IndexTTSNode:
                 raise ValueError(f"TTS模型返回了意外的格式: {type(result)}")
                 
         except Exception as e:
-            import traceback
             print(f"[IndexTTS] 生成语音失败: {e}")
-            print(f"[IndexTTS] 错误详情:")
-            traceback.print_exc()
             
-            # 生成一个简单的错误提示音频
-            sample_rate = 24000
-            duration = 1.0  # 1秒
-            t = np.linspace(0, duration, int(sample_rate * duration))
-            signal = np.sin(2 * np.pi * 440 * t).astype(np.float32)  # 440Hz警告音
-            print(f"[IndexTTS] 生成警告音频作为错误处理")
+            raise e
+            # [#] 节点作为工作流的一个环节, 如果隐藏错误, 可能很难被发现, 因此不如 raise
+
+            # # 生成一个简单的错误提示音频
+            # sample_rate = 24000
+            # duration = 1.0  # 1秒
+            # t = np.linspace(0, duration, int(sample_rate * duration))
+            # signal = np.sin(2 * np.pi * 440 * t).astype(np.float32)  # 440Hz警告音
+            # print(f"[IndexTTS] 生成警告音频作为错误处理")
             
-            # 转换为ComfyUI音频格式
-            signal_tensor = torch.tensor(signal, dtype=torch.float32).unsqueeze(0).unsqueeze(0)  # [1, 1, samples]
-            audio_dict = {
-                "waveform": signal_tensor,
-                "sample_rate": sample_rate
-            }
+            # # 转换为ComfyUI音频格式
+            # signal_tensor = torch.tensor(signal, dtype=torch.float32).unsqueeze(0).unsqueeze(0)  # [1, 1, samples]
+            # audio_dict = {
+            #     "waveform": signal_tensor,
+            #     "sample_rate": sample_rate
+            # }
             
-            return (audio_dict, seed, "")
+            # return (audio_dict, seed, "")
     
     def _generate_speech_tts2(self, text, reference_audio, seed, temperature, top_p, top_k, repetition_penalty, length_penalty, num_beams, max_mel_tokens):
         """使用 IndexTTS-2 引擎生成语音"""

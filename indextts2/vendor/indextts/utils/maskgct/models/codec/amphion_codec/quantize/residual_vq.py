@@ -12,11 +12,11 @@ import torch.nn.functional as F
 from einops import rearrange
 from torch.nn.utils import weight_norm
 
-from indextts.utils.maskgct.models.codec.amphion_codec.quantize.factorized_vector_quantize import (
+from .factorized_vector_quantize import (
     FactorizedVectorQuantize,
 )
-from indextts.utils.maskgct.models.codec.amphion_codec.quantize.vector_quantize import VectorQuantize
-from indextts.utils.maskgct.models.codec.amphion_codec.quantize.lookup_free_quantize import LookupFreeQuantize
+from .vector_quantize import VectorQuantize
+from .lookup_free_quantize import LookupFreeQuantize
 
 
 class ResidualVQ(nn.Module):

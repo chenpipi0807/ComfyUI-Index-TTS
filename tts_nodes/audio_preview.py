@@ -4,16 +4,16 @@ import numpy as np
 import tempfile
 import base64
 
-# 确保模块可被找到
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# # 确保模块可被找到
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# 确保导入路径正确
-package_root = os.path.dirname(os.path.dirname(__file__))
-if package_root not in sys.path:
-    sys.path.append(package_root)
+# # 确保导入路径正确
+# package_root = os.path.dirname(os.path.dirname(__file__))
+# if package_root not in sys.path:
+#     sys.path.append(package_root)
 
 # 导入工具函数
-from utils.audio_utils import save_audio
+from ..utils.audio_utils import save_audio
 
 class AudioPreviewNode:
     """

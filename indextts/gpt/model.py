@@ -10,10 +10,10 @@ from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 from transformers.utils.model_parallel_utils import (assert_device_map,
                                                      get_device_map)
 
-from indextts.gpt.conformer_encoder import ConformerEncoder
-from indextts.gpt.perceiver import PerceiverResampler
-from indextts.utils.arch_util import AttentionBlock
-from indextts.utils.typical_sampling import TypicalLogitsWarper
+from .conformer_encoder import ConformerEncoder
+from .perceiver import PerceiverResampler
+from ..utils.arch_util import AttentionBlock
+from ..utils.typical_sampling import TypicalLogitsWarper
 
 # 添加全局标志，用于跟踪是否需要使用替代生成方法
 _USE_ALTERNATIVE_GENERATION = False

@@ -14,15 +14,15 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 from omegaconf import OmegaConf
 
-from indextts.gpt.model_v2 import UnifiedVoice
-from indextts.utils.maskgct_utils import build_semantic_model, build_semantic_codec
-from indextts.utils.checkpoint import load_checkpoint
-from indextts.utils.front import TextNormalizer, TextTokenizer
+from .gpt.model_v2 import UnifiedVoice
+from .utils.maskgct_utils import build_semantic_model, build_semantic_codec
+from .utils.checkpoint import load_checkpoint
+from .utils.front import TextNormalizer, TextTokenizer
 
-from indextts.s2mel.modules.commons import load_checkpoint2, MyModel
-from indextts.s2mel.modules.bigvgan import bigvgan
-from indextts.s2mel.modules.campplus.DTDNN import CAMPPlus
-from indextts.s2mel.modules.audio import mel_spectrogram
+from .s2mel.modules.commons import load_checkpoint2, MyModel
+from .s2mel.modules.bigvgan import bigvgan
+from .s2mel.modules.campplus.DTDNN import CAMPPlus
+from .s2mel.modules.audio import mel_spectrogram
 
 from transformers import AutoTokenizer
 try:
@@ -107,7 +107,7 @@ class IndexTTS2:
         if self.use_cuda_kernel:
             # preload the CUDA kernel for BigVGAN
             try:
-                from indextts.BigVGAN.alias_free_activation.cuda import load
+                from .vendor.indextts2.BigVGAN.alias_free_activation.cuda import load
 
                 anti_alias_activation_cuda = load.load()
                 print(">> Preload custom CUDA kernel for BigVGAN", anti_alias_activation_cuda)

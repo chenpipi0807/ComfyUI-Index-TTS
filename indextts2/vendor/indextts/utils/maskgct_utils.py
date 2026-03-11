@@ -12,9 +12,9 @@ from transformers import SeamlessM4TFeatureExtractor, Wav2Vec2BertModel
 import safetensors
 import numpy as np
 
-from indextts.utils.maskgct.models.codec.kmeans.repcodec_model import RepCodec
-from indextts.utils.maskgct.models.tts.maskgct.maskgct_s2a import MaskGCT_S2A
-from indextts.utils.maskgct.models.codec.amphion_codec.codec import CodecEncoder, CodecDecoder
+from .maskgct.models.codec.kmeans.repcodec_model import RepCodec
+from .maskgct.models.tts.maskgct.maskgct_s2a import MaskGCT_S2A
+from .maskgct.models.codec.amphion_codec.codec import CodecEncoder, CodecDecoder
 import time
 
 

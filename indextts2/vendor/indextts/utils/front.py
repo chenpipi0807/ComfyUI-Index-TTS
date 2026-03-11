@@ -4,7 +4,7 @@ import traceback
 import re
 from typing import List, Union, overload
 import warnings
-from indextts.utils.common import tokenize_by_CJK_char, de_tokenized_by_CJK_char
+from .common import tokenize_by_CJK_char, de_tokenized_by_CJK_char
 from sentencepiece import SentencePieceProcessor
 import platform
 

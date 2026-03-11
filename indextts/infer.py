@@ -15,13 +15,13 @@ import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
-from indextts.BigVGAN.models import BigVGAN as Generator
-from indextts.gpt.model import UnifiedVoice
-from indextts.utils.checkpoint import load_checkpoint
-from indextts.utils.feature_extractors import MelSpectrogramFeatures
-from indextts.utils.common import tokenize_by_CJK_char
+from .BigVGAN.models import BigVGAN as Generator
+from .gpt.model import UnifiedVoice
+from .utils.checkpoint import load_checkpoint
+from .utils.feature_extractors import MelSpectrogramFeatures
+from .utils.common import tokenize_by_CJK_char
 
-from indextts.utils.front import TextNormalizer
+from .utils.front import TextNormalizer
 
 class IndexTTS:
     def __init__(
@@ -61,7 +61,7 @@ class IndexTTS:
         # Comment-off to load the VQ-VAE model for debugging tokenizer
         #   https://github.com/index-tts/index-tts/issues/34
         #
-        # from indextts.vqvae.xtts_dvae import DiscreteVAE
+        # from .vqvae.xtts_dvae import DiscreteVAE
         # self.dvae = DiscreteVAE(**self.cfg.vqvae)
         # self.dvae_path = os.path.join(self.model_dir, self.cfg.dvae_checkpoint)
         # load_checkpoint(self.dvae, self.dvae_path)
@@ -95,7 +95,7 @@ class IndexTTS:
         if self.use_cuda_kernel:
             # preload the CUDA kernel for BigVGAN
             try:
-                from indextts.BigVGAN.alias_free_activation.cuda import load
+                from .BigVGAN.alias_free_activation.cuda import load
                 anti_alias_activation_cuda = load.load()
                 print(">> Preload custom CUDA kernel for BigVGAN", anti_alias_activation_cuda)
             except:

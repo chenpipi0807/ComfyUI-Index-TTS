@@ -110,7 +110,7 @@ class IndexTTS2Loader:
             for k in list(sys.modules.keys()):
                 if k == "indextts" or k.startswith("indextts."):
                     sys.modules.pop(k, None)
-            from indextts.infer_v2 import IndexTTS2  # imported from vendored package
+            from .vendor.indextts.infer_v2 import IndexTTS2  # imported from vendored package
         except Exception as e:
             # Fallback: import by file path to avoid package name collisions
             try:

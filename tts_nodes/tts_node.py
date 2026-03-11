@@ -6,23 +6,23 @@ import tempfile
 import json
 import time
 
-# 确保模块可被找到
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# # 确保模块可被找到
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# 确保导入路径正确
-package_root = os.path.dirname(os.path.dirname(__file__))
-if package_root not in sys.path:
-    sys.path.append(package_root)
+# # 确保导入路径正确
+# package_root = os.path.dirname(os.path.dirname(__file__))
+# if package_root not in sys.path:
+#     sys.path.append(package_root)
 
 # 导入工具函数
-from utils.audio_utils import load_audio, save_audio, get_temp_file
+from ..utils.audio_utils import load_audio, save_audio, get_temp_file
 
 # 导入ComfyUI folder_paths用于获取模型目录
 import folder_paths
 
-# 添加索引TTS路径
-INDEX_TTS_PATH = os.path.join(folder_paths.models_dir, "Index-TTS")
-sys.path.append(INDEX_TTS_PATH)
+# # 添加索引TTS路径
+# INDEX_TTS_PATH = os.path.join(folder_paths.models_dir, "Index-TTS")
+# sys.path.append(INDEX_TTS_PATH)
 
 # 尝试加载IndexTTS的必要依赖
 try:
@@ -64,7 +64,7 @@ try:
             
             # 尝试导入indextts模块
             try:
-                import indextts
+                from . import indextts
                 self.model = indextts.infer.IndexTTS(model_dir=self.model_dir, cfg_path=self.cfg_path)
                 self.use_original = True
                 print("使用原始IndexTTS模块")

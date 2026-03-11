@@ -4,17 +4,17 @@ from typing import Optional, Tuple
 import torch
 import torch.nn as nn
 
-from indextts.gpt.conformer.attention import (MultiHeadedAttention,
+from .conformer.attention import (MultiHeadedAttention,
                                               RelPositionMultiHeadedAttention)
-from indextts.gpt.conformer.embedding import (NoPositionalEncoding,
+from .conformer.embedding import (NoPositionalEncoding,
                                               PositionalEncoding,
                                               RelPositionalEncoding)
-from indextts.gpt.conformer.subsampling import (Conv2dSubsampling2,
+from .conformer.subsampling import (Conv2dSubsampling2,
                                                 Conv2dSubsampling4,
                                                 Conv2dSubsampling6,
                                                 Conv2dSubsampling8,
                                                 LinearNoSubsampling)
-from indextts.utils.common import make_pad_mask
+from ..utils.common import make_pad_mask
 
 
 class PositionwiseFeedForward(torch.nn.Module):

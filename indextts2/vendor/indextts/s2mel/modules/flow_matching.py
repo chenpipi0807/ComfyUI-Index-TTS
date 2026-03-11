@@ -3,8 +3,8 @@ from abc import ABC
 import torch
 import torch.nn.functional as F
 
-from indextts.s2mel.modules.diffusion_transformer import DiT
-from indextts.s2mel.modules.commons import sequence_mask
+from .diffusion_transformer import DiT
+from .commons import sequence_mask
 
 from tqdm import tqdm
 

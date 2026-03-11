@@ -10,10 +10,10 @@ import json
 from pathlib import Path
 import random
 
-# 确保当前目录在导入路径中
-current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.append(current_dir)
+# # 确保当前目录在导入路径中
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# if current_dir not in sys.path:
+#     sys.path.append(current_dir)
 
 # 导入TTS模型
 from .tts_models import IndexTTSModel
