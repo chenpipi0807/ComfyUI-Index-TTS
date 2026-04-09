@@ -33,7 +33,6 @@ from huggingface_hub import hf_hub_download
 import safetensors
 from transformers import SeamlessM4TFeatureExtractor
 import random
-import torch.nn.functional as F
 
 class IndexTTS2:
     def __init__(
