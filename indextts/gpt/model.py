@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from transformers import GPT2Config, GPT2PreTrainedModel, LogitsProcessorList
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
-from transformers.utils.model_parallel_utils import (assert_device_map,
+from ...compatibility_patch import (assert_device_map,
                                                      get_device_map)
 
 from .conformer_encoder import ConformerEncoder

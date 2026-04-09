@@ -29,16 +29,19 @@ from transformers.cache_utils import (
     Cache,
     DynamicCache,
     EncoderDecoderCache,
-    OffloadedCache,
+    # OffloadedCache,
     # QuantizedCacheConfig,
     StaticCache,
 )
+from .....compatibility_patch import OffloadedCache, isin_mps_friendly
 from transformers.configuration_utils import PretrainedConfig
 from transformers.integrations.deepspeed import is_deepspeed_zero3_enabled
 from transformers.integrations.fsdp import is_fsdp_managed_module
 from transformers.modeling_outputs import CausalLMOutputWithPast, Seq2SeqLMOutput
-from transformers.pytorch_utils import isin_mps_friendly
-from transformers.tokenization_utils import ExtensionsTrie
+try:
+    from transformers.tokenization_utils import ExtensionsTrie
+except Exception as e:
+    from transformers.tokenization_python import ExtensionsTrie
 from transformers.utils import (
     ModelOutput,
     is_accelerate_available,
@@ -48,8 +51,14 @@ from transformers.utils import (
     is_torchdynamo_compiling,
     logging,
 )
-from transformers.generation.beam_constraints import DisjunctiveConstraint, PhrasalConstraint
-from transformers.generation.beam_search import BeamScorer, BeamSearchScorer, ConstrainedBeamSearchScorer
+try:
+    from transformers.utils.dummy_pt_objects import DisjunctiveConstraint, PhrasalConstraint, BeamScorer, ConstrainedBeamSearchScorer
+    from .transformers_beam_search import BeamSearchScorer
+except Exception:
+    from transformers.generation.beam_constraints import DisjunctiveConstraint, PhrasalConstraint
+    from transformers.generation.beam_search import BeamScorer, BeamSearchScorer, ConstrainedBeamSearchScorer
+
+
 try:
     from transformers.generation.candidate_generator import (
         AssistedCandidateGenerator,
@@ -87,7 +96,7 @@ from transformers.generation.configuration_utils import (
     GenerationConfig,
     GenerationMode,
 )
-from .compatibility_patch import QuantizedCacheConfig, NEED_SETUP_CACHE_CLASSES_MAPPING, QUANT_BACKEND_CLASSES_MAPPING
+from .....compatibility_patch import HammingDiversityLogitsProcessor, QuantizedCacheConfig, NEED_SETUP_CACHE_CLASSES_MAPPING, QUANT_BACKEND_CLASSES_MAPPING
 from transformers.generation.logits_process import (
     EncoderNoRepeatNGramLogitsProcessor,
     EncoderRepetitionPenaltyLogitsProcessor,
@@ -96,7 +105,6 @@ from transformers.generation.logits_process import (
     ExponentialDecayLengthPenalty,
     ForcedBOSTokenLogitsProcessor,
     ForcedEOSTokenLogitsProcessor,
-    HammingDiversityLogitsProcessor,
     InfNanRemoveLogitsProcessor,
     LogitNormalization,
     LogitsProcessorList,
@@ -1510,7 +1518,7 @@ class GenerationMixin:
                 not is_torchdynamo_compiling()
                 and self.generation_config._from_model_config  # 1)
                 and self.generation_config._original_object_hash == hash(self.generation_config)  # 2)
-                and len(self.config._get_non_default_generation_parameters()) > 0  # 3)
+                and hasattr(self.config, '_get_non_default_generation_parameters') and len(self.config._get_non_default_generation_parameters()) > 0  # 3)
             ):
                 new_generation_config = GenerationConfig.from_model_config(self.config)
                 if new_generation_config != self.generation_config:  # 4)
@@ -2380,7 +2388,7 @@ class GenerationMixin:
 
         # Convert to legacy cache format if requested
         if (
-            generation_config.return_legacy_cache is not False  # Should check for `True` after v4.47
+            getattr(generation_config, 'return_legacy_cache', None) is not False  # Should check for `True` after v4.47
             and not is_torchdynamo_compiling()
             and hasattr(result, "past_key_values")
             and hasattr(result.past_key_values, "to_legacy_cache")
