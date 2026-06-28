@@ -7,25 +7,26 @@ class IndexTTSEmotionVectorNode:
     """
     ComfyUI node: Index TTS Emotion Vector
     - Outputs an emotion vector as JSON string for Index TTS 2's `emo_vector` input.
-    - Matches HF demo with 8 sliders: Happy, Angry, Sad, Fear, Hate, Love, Surprise, Neutral
+    - Matches HF demo with 8 sliders: Happy, Angry, Sad, Fear, Hate, Low, Surprise, Neutral
     - Optional random sampling (seeded) when you want quick stochastic presets.
     """
 
     EMO_ORDER = [
-        "Happy", "Angry", "Sad", "Fear", "Hate", "Love", "Surprise", "Neutral"
+        "Happy", "Angry", "Sad", "Fear", "Hate", "Low", "Surprise", "Neutral"
     ]
+    EMO_VECTOR_BIAS = np.array([0.75, 0.70, 0.80, 0.80, 0.75, 0.75, 0.55, 0.45], dtype=np.float32)
 
     @classmethod
     def INPUT_TYPES(cls):
         sliders = {
-            "Happy": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Angry": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Sad": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Fear": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Hate": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Love": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Surprise": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Neutral": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
+            "Happy": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
+            "Angry": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
+            "Sad": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
+            "Fear": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
+            "Hate": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
+            "Low": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
+            "Surprise": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
+            "Neutral": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
         }
         return {
             "required": {
@@ -57,6 +58,14 @@ class IndexTTSEmotionVectorNode:
             vec = vec / s
         return vec.tolist()
 
+    @classmethod
+    def _normalize_like_demo(cls, vec: List[float]) -> List[float]:
+        tmp = np.array([max(0.0, float(x)) for x in vec], dtype=np.float32) * cls.EMO_VECTOR_BIAS
+        total = float(tmp.sum())
+        if total > 0.8:
+            tmp = tmp * (0.8 / total)
+        return tmp.tolist()
+
     def build_vector(
         self,
         Happy: float,
@@ -64,23 +73,20 @@ class IndexTTSEmotionVectorNode:
         Sad: float,
         Fear: float,
         Hate: float,
-        Love: float,
+        Low: float,
         Surprise: float,
         Neutral: float,
         random_sampling: bool = False,
         seed: int = 0,
         normalize: bool = True,
         top_k_random: int = 2,
+        Love=None,
     ) -> Tuple[str]:
         if random_sampling:
             vec = self._sample_random_vector(seed, top_k_random)
         else:
-            vec = [Happy, Angry, Sad, Fear, Hate, Love, Surprise, Neutral]
+            low_value = Low if Love is None else Love
+            vec = [Happy, Angry, Sad, Fear, Hate, low_value, Surprise, Neutral]
             if normalize:
-                s = float(sum(max(0.0, float(x)) for x in vec))
-                if s > 0:
-                    vec = [float(max(0.0, float(x)))/s for x in vec]
-                else:
-                    # fallback to neutral
-                    vec = [0.0]*7 + [1.0]
+                vec = self._normalize_like_demo(vec)
         return (json.dumps(vec, ensure_ascii=False),)
