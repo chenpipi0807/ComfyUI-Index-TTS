@@ -24,3 +24,17 @@ docstring-parser
 # WeTextProcessing
 modelscope
 wetext
+# ===== IndexTTS-2.5 新增依赖 =====
+tiktoken>=0.7.0          # 多语言分词器
+openai-whisper>=20231117 # tokenizer 基类
+librosa>=0.10.0
+soundfile>=0.10.0
+omegaconf>=2.3.0
+cn2an>=0.5.22            # 中文数字归一化
+jieba>=0.42.1
+g2p-en>=2.1.0            # 英语 G2P（CMU 音素）
+fugashi>=1.2.0           # 日语分词/G2P
+unidic-lite>=1.0.0
+accelerate>=1.8.0        # Qwen 情感模型 device_map
+matplotlib>=3.8.0        # BigVGAN utils
+descript-audiotools==0.7.2  # DAC 依赖（PyPI 版即可）

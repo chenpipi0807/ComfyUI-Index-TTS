@@ -1,0 +1,74 @@
+.\ComfyUI\models\IndexTTS-2.5>tree /f
+卷 系统 的文件夹 PATH 列表
+卷序列号为 001C-C009
+C:.
+│  codec.pth                    ← 2.5 新增：统一语义编解码器（替代 MaskGCT semantic_codec）
+│  config.yaml
+│  feat1.pt                     ← spk_matrix（音色矩阵）
+│  feat2.pt                     ← emo_matrix（情感矩阵）
+│  gpt.pth                      ← GPT 自回归主模型（约 3.3GB）
+│  multilingual_zh_ja_yue_char_del.tiktoken  ← 2.5 新增：多语言分词器（替代 bpe.model）
+│  s2mel.pth
+│  wav2vec2bert_stats.pt
+│
+├─bigvgan
+│      bigvgan_generator.pt     ← 声码器（config.yaml 的 vocoder.name）
+│      config.json
+│
+├─qwen0.6bemo4-merge           ← 情感文本分析小模型（cfg.qwen_emo_path）
+│      added_tokens.json
+│      chat_template.jinja
+│      config.json
+│      generation_config.json
+│      merges.txt
+│      model.safetensors
+│      special_tokens_map.json
+│      tokenizer.json
+│      tokenizer_config.json
+│      vocab.json
+│
+└─w2v-bert-2.0                 ← Wav2Vec2Bert 特征提取器（整仓）
+        config.json
+        conformer_shaw.pt
+        model.safetensors
+        preprocessor_config.json
+
+
+模型从哪里下载、下载到哪里（全部放到 .\ComfyUI\models\IndexTTS-2.5\ 路径下）：
+
+基础模型（IndexTTS-2.5 整仓）
+   - 页面：https://huggingface.co/IndexTeam/IndexTTS-2.5/tree/main
+   - 国内镜像：https://hf-mirror.com/IndexTeam/IndexTTS-2.5/tree/main
+   - 放置：.\ComfyUI\models\IndexTTS-2.5
+   - 注意：2.5 不再需要 bpe.model / campplus_cn_common.bin 在 HF 主仓内（campplus 见下）
+
+qwen 情感模型
+   - https://huggingface.co/IndexTeam/IndexTTS-2.5/tree/main/qwen0.6bemo4-merge
+   - 放置：.\ComfyUI\models\IndexTTS-2.5\qwen0.6bemo4-merge
+   - 仅「Emotion Text 节点」（use_emo_text）需要；不用该节点可以不下载
+
+CampPlus 说话人嵌入
+   - 页面：https://huggingface.co/funasr/campplus/tree/main
+   - 直接文件链接：https://huggingface.co/funasr/campplus/resolve/main/campplus_cn_common.bin
+   - 本地放置：.\ComfyUI\models\IndexTTS-2.5\campplus_cn_common.bin
+
+Wav2Vec2Bert 特征提取器（facebook/w2v-bert-2.0）
+   - 页面：https://huggingface.co/facebook/w2v-bert-2.0/tree/main
+   - 本地放置（离线优先）：.\ComfyUI\models\IndexTTS-2.5\w2v-bert-2.0\（整仓文件夹）
+
+BigVGAN 声码器
+   - 名称读取自 config.yaml 的 vocoder.name（bigvgan_generator.pt）
+   - 页面：https://huggingface.co/nvidia/bigvgan_v2_22khz_80band_256x/tree/main
+   - 本地放置：.\ComfyUI\models\IndexTTS-2.5\bigvgan\（config.json + bigvgan_generator.pt）
+
+其他本地直读文件（需与 config.yaml 一致）：
+   - gpt.pth（cfg.gpt_checkpoint）
+   - s2mel.pth（cfg.s2mel_checkpoint）
+   - codec.pth（2.5 语义编解码器，代码内固定文件名）
+   - multilingual_zh_ja_yue_char_del.tiktoken（多语言分词器）
+   - wav2vec2bert_stats.pt（cfg.w2v_stat）
+   - feat1.pt（cfg.spk_matrix）
+   - feat2.pt（cfg.emo_matrix）
+   - qwen0.6bemo4-merge\（cfg.qwen_emo_path 指定目录）
+
+辅助模型若未放在上述位置，运行时会自动下载到 .\ComfyUI\models\IndexTTS-2.5\hf_cache\（需联网）。
