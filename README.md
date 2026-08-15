@@ -23,8 +23,6 @@
 
 本项目已新增对 IndexTTS-2.5 的完整支持（与 TTS2 节点互不干扰，可共存）。
 
-<!-- 📷 截图位置1：Index TTS 2.5 五个节点在 ComfyUI 中的并排展示（待补充） -->
-
 **2.5 相比 2.0 的升级：**
 
 - **多语言合成**：中文 / 英语 / 日语 / 西班牙语 / 阿拉伯语，且支持**跨语种克隆**（用中文参考音频直接说英文/日文）
@@ -43,8 +41,6 @@
 - `Index TTS 2.5 - Emotion Vector`：8 维情感向量滑条
 - `Index TTS 2.5 - Emotion Text`：情感描述控制，留空则自动分析主文本情感（需要 Qwen 情感模型）
 - `Index TTS 2.5 - Cache Control`：显存/缓存控制
-
-<!-- 📷 截图位置2：2.5 基础工作流 LoadAudio → Index TTS 2.5 - Base → SaveAudio（待补充） -->
 
 基础工作流已更新，详见 `./workflow/TTS2.5.json`（直接拖进 ComfyUI 页面即可导入）。
 
