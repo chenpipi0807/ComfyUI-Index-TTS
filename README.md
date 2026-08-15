@@ -9,7 +9,7 @@
 
 # ComfyUI-Index-TTS
 
-使用IndexTTS模型在ComfyUI中实现高质量文本到语音转换的自定义节点。支持中文和英文文本，可以基于参考音频复刻声音特征。
+使用IndexTTS模型在ComfyUI中实现高质量文本到语音转换的自定义节点。已支持 IndexTTS-2.5（中/英/日/西/阿多语言、语速控制、发音标注、情感控制），可以基于参考音频复刻声音特征。
 
 ![示例截图1](https://github.com/user-attachments/assets/41960425-f739-4496-9520-8f9cae34ff51)
 ![示例截图2](https://github.com/user-attachments/assets/1ff0d1d0-7a04-4d91-9d53-cd119250ed67)
@@ -18,6 +18,129 @@
 
 
 ## 最新更新（重要）
+
+### 🔥 2026-08-15：IndexTTS-2.5 来了！
+
+本项目已新增对 IndexTTS-2.5 的完整支持（与 TTS2 节点互不干扰，可共存）。
+
+<!-- 📷 截图位置1：Index TTS 2.5 五个节点在 ComfyUI 中的并排展示（待补充） -->
+
+**2.5 相比 2.0 的升级：**
+
+- **多语言合成**：中文 / 英语 / 日语 / 西班牙语 / 阿拉伯语，且支持**跨语种克隆**（用中文参考音频直接说英文/日文）
+- **语速控制**：`duration_factor` 0.5 – 2.0，大于 1 变慢、小于 1 变快
+- **发音控制升级**：在文本里直接标注多音字/发音，2.5 的遵循能力大幅增强
+  - 中文拼音：`他在银<行|XING2>里<行|HANG2>走了半天`
+  - 英文音素（CMU）：`He had a <minute|M IH1 . N AH0 T> to examine the <minute|M AY0 . N UW1 T> details.`
+  - 日语假名：`彼は料理が<上手|じょうず>だ`
+- **保留 2.0 全部情感控制能力**（情感参考音频 / 8 维情感向量 / Qwen 情感文本分析）
+- **更快**：bf16 推理，速度约为 2.0 的 1.6 倍
+
+**新增五个节点（audio 分类下）：**
+
+- `Index TTS 2.5 - Base (多语言/语速)`：基础合成 + 语言选择 + 语速控制 + 发音标注
+- `Index TTS 2.5 - Emotion Audio`：情感参考音频（音色与情感解耦）
+- `Index TTS 2.5 - Emotion Vector`：8 维情感向量滑条
+- `Index TTS 2.5 - Emotion Text`：情感描述控制，留空则自动分析主文本情感（需要 Qwen 情感模型）
+- `Index TTS 2.5 - Cache Control`：显存/缓存控制
+
+<!-- 📷 截图位置2：2.5 基础工作流 LoadAudio → Index TTS 2.5 - Base → SaveAudio（待补充） -->
+
+基础工作流已更新，详见 `./workflow/TTS2.5.json`（直接拖进 ComfyUI 页面即可导入）。
+
+#### 2.5 模型下载与放置（全部放到 `./ComfyUI/models/IndexTTS-2.5/`）
+
+1) 基础模型（整仓）
+   - 页面：[IndexTTS-2.5](https://huggingface.co/IndexTeam/IndexTTS-2.5/tree/main)
+   - 国内镜像：[hf-mirror 镜像页](https://hf-mirror.com/IndexTeam/IndexTTS-2.5/tree/main)
+   - 放置：`.\ComfyUI\models\IndexTTS-2.5`
+   - 包含：`gpt.pth`（主模型约 3.3GB）、`codec.pth`（2.5 新统一语义编解码器）、`s2mel.pth`、`config.yaml`、`feat1.pt`、`feat2.pt`、`wav2vec2bert_stats.pt`、`multilingual_zh_ja_yue_char_del.tiktoken`（多语言分词器，替代旧版 bpe.model）
+
+2) qwen 模型（情绪分类，仅 Emotion Text 节点需要）
+   - 页面：[IndexTTS-2.5/qwen0.6bemo4-merge](https://huggingface.co/IndexTeam/IndexTTS-2.5/tree/main/qwen0.6bemo4-merge)
+   - 放置：`.\ComfyUI\models\IndexTTS-2.5\qwen0.6bemo4-merge\`
+   - 不用 Emotion Text 节点可以不下载
+
+3) CampPlus 说话人嵌入
+   - 页面：[https://huggingface.co/funasr/campplus](https://huggingface.co/funasr/campplus)
+   - 直链：[https://huggingface.co/funasr/campplus/resolve/main/campplus_cn_common.bin](https://huggingface.co/funasr/campplus/resolve/main/campplus_cn_common.bin)
+   - 放置：`.\ComfyUI\models\IndexTTS-2.5\campplus_cn_common.bin`
+
+4) Wav2Vec2Bert 特征提取器（facebook/w2v-bert-2.0）
+   - 页面：[https://huggingface.co/facebook/w2v-bert-2.0/tree/main](https://huggingface.co/facebook/w2v-bert-2.0/tree/main)
+   - 放置（离线优先）：`.\ComfyUI\models\IndexTTS-2.5\w2v-bert-2.0\`（整仓文件夹）
+
+5) BigVGAN 声码器
+   - 页面：[https://huggingface.co/nvidia/bigvgan_v2_22khz_80band_256x/tree/main](https://huggingface.co/nvidia/bigvgan_v2_22khz_80band_256x/tree/main)
+   - 放置：`.\ComfyUI\models\IndexTTS-2.5\bigvgan\`（`config.json` + `bigvgan_generator.pt`）
+
+示例目录结构（详见仓库内 `TTS2.5模型路径.txt`）：
+
+```text
+ComfyUI/models/IndexTTS-2.5/
+│  codec.pth
+│  config.yaml
+│  feat1.pt
+│  feat2.pt
+│  gpt.pth
+│  multilingual_zh_ja_yue_char_del.tiktoken
+│  s2mel.pth
+│  wav2vec2bert_stats.pt
+│  campplus_cn_common.bin
+│
+├─bigvgan
+│      bigvgan_generator.pt
+│      config.json
+│
+├─qwen0.6bemo4-merge
+│      config.json
+│      model.safetensors
+│      tokenizer.json
+│      ...
+│
+└─w2v-bert-2.0
+        config.json
+        conformer_shaw.pt
+        model.safetensors
+        preprocessor_config.json
+```
+
+#### 一键下载 2.5 模型（推荐）
+
+- 脚本位置：`ComfyUI/custom_nodes/ComfyUI-Index-TTS/TTS2_5_download.py`
+- 与 TTS2 下载脚本用法一致，支持断点续传、国内镜像：
+
+```powershell
+python .\ComfyUI\custom_nodes\ComfyUI-Index-TTS\TTS2_5_download.py
+```
+
+- 运行后根据提示选择 2 使用国内镜像（默认）或 1 使用官方源。
+- 若镜像设置不生效，可先在控制台设置：`$env:HF_ENDPOINT = "https://hf-mirror.com"`（PowerShell）
+
+#### 2.5 使用方法
+
+1. **加载参考音频**：用 `LoadAudio` 节点选择一段 3–15 秒的干净人声（也可以先用 `Timbre音频加载器` 节点选仓库自带音色）
+2. **接到 `Index TTS 2.5 - Base`**：填文本、选语言（ZH/EN/JA/ES/AR 或 ZH/EN 混合）、按需调速（`duration_factor`）
+3. **输出接 `SaveAudio` 或 `PreviewAudio`** 即可
+
+发音标注直接写在文本里，例如：
+
+```text
+他在银<行|XING2>里<行|HANG2>走了半天，发现这笔业务办不<行|HANG2>。
+```
+
+情感控制三选一（与 TTS2 用法一致）：
+
+- 有情感参考音频 → 用 `Emotion Audio` 节点，`emotion_weight` 调强度（0–1）
+- 想精细配比 → 用 `Emotion Vector` 节点，8 个滑条对应 高兴/愤怒/悲伤/恐惧/反感/低落/惊讶/平静
+- 只想写一句话 → 用 `Emotion Text` 节点，填情感描述（留空则自动分析主文本），`emotion_weight` 建议 0.6 左右
+
+> 提示：Emotion Text 节点首次使用会额外加载 Qwen 情感小模型（约 1.2GB 显存）；其余节点不需要。
+> 提示：2.5 与 2.0 的模型目录相互独立（`IndexTTS-2.5` vs `IndexTTS-2`），两套节点可以同时存在于一个工作流中。
+
+---
+
+### IndexTTS-2 支持
 
 本项目已新增对 IndexTTS-2（简称 TTS2）的支持，并将功能拆分为四个核心节点，方便在 ComfyUI 中按需组合：
 基础工作流已更新，详见./workflow/TTS2.json.
@@ -166,9 +289,12 @@ python -m pip install -U "huggingface_hub[hf_xet]"
 
 ## 功能特点
 
-- 支持中文和英文文本合成
+- 支持 IndexTTS-2.5 / IndexTTS-2 / IndexTTS-1.5 三代模型
+- 2.5 支持中/英/日/西/阿五种语言与跨语种克隆
 - 基于参考音频复刻声音特征（变声功能）
-- 支持调节语速（原版不支持后处理实现效果会有一点折损）
+- 支持语速控制（2.5 原生 duration_factor；旧版为后处理实现效果会有一点折损）
+- 支持发音标注（拼音/CMU音素/日语假名，2.5）
+- 多种情感控制方式（参考音频/情感向量/情感文本）
 - 多种音频合成参数控制
 - Windows兼容（无需额外依赖）
 
@@ -200,6 +326,17 @@ python -m pip install -U "huggingface_hub[hf_xet]"
 
 
 ## 更新日志
+
+### 2026-08-15
+
+- **新增 IndexTTS-2.5 完整支持**：
+  - 新增五个 2.5 节点：`Index TTS 2.5 - Base (多语言/语速)`、`Emotion Audio`、`Emotion Vector`、`Emotion Text`、`Cache Control`
+  - 支持中/英/日/西/阿多语言合成与跨语种克隆
+  - 原生语速控制 `duration_factor`（0.5–2.0）
+  - 发音标注控制：拼音 `<行|XING2>` / 英文 CMU 音素 / 日语假名
+  - 模型目录 `ComfyUI/models/IndexTTS-2.5/`，配套 `TTS2_5_download.py` 一键下载脚本与 `TTS2.5模型路径.txt` 路径说明
+  - 新增 `workflow/TTS2.5.json` 示例工作流
+  - 适配 transformers 5.x（vendor 内移植兼容层，与 TTS2 节点互不干扰）
 
 ### 2025-12-18
 

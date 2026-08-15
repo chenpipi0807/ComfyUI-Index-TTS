@@ -1,0 +1,99 @@
+{
+  "last_node_id": 4,
+  "last_link_id": 3,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadAudio",
+      "pos": [60, 200],
+      "size": [320, 120],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {"name": "AUDIO", "type": "AUDIO", "links": [1], "slot_index": 0}
+      ],
+      "properties": {"Node name for S&R": "LoadAudio"},
+      "widgets_values": ["把参考音频放到 ComfyUI/input 后在这里选择.wav", ""]
+    },
+    {
+      "id": 2,
+      "type": "IndexTTS25BaseNode",
+      "pos": [460, 120],
+      "size": [400, 480],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {"name": "reference_audio", "type": "AUDIO", "link": 1},
+        {"name": "cache_control", "type": "DICT", "link": 2}
+      ],
+      "outputs": [
+        {"name": "audio", "type": "AUDIO", "links": [3], "slot_index": 0},
+        {"name": "seed", "type": "INT", "links": null},
+        {"name": "subtitle", "type": "STRING", "links": null}
+      ],
+      "properties": {"Node name for S&R": "IndexTTS25BaseNode"},
+      "widgets_values": [
+        "大家好，这是 IndexTTS 二点五 在 ComfyUI 里的声音。支持中英日西阿五种语言，还能控制语速和发音。",
+        "ZH",
+        1.0,
+        "on",
+        0.8,
+        0.8,
+        30,
+        3,
+        10.0,
+        0.0,
+        1500,
+        120,
+        200,
+        true,
+        0
+      ]
+    },
+    {
+      "id": 3,
+      "type": "IndexTTS25CacheControlNode",
+      "pos": [60, 420],
+      "size": [320, 80],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {"name": "cache_control", "type": "DICT", "links": [2], "slot_index": 0}
+      ],
+      "properties": {"Node name for S&R": "IndexTTS25CacheControlNode"},
+      "widgets_values": [false]
+    },
+    {
+      "id": 4,
+      "type": "SaveAudio",
+      "pos": [940, 200],
+      "size": [320, 100],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {"name": "audio", "type": "AUDIO", "link": 3}
+      ],
+      "outputs": [],
+      "properties": {"Node name for S&R": "SaveAudio"},
+      "widgets_values": ["IndexTTS2_5/tts2_5_base"]
+    }
+  ],
+  "links": [
+    [1, 1, 0, 2, 0, "AUDIO"],
+    [2, 3, 0, 2, 1, "DICT"],
+    [3, 2, 0, 4, 0, "AUDIO"]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {"scale": 1.0, "offset": [0, 0]},
+    "note": "把本文件拖进 ComfyUI 页面即可导入；LoadAudio 里选择你放进 ComfyUI/input 的参考音频"
+  },
+  "version": 0.4
+}
