@@ -7,7 +7,6 @@
 import os
 import sys
 import hashlib
-import torchaudio
 import torch
 import glob
 from pathlib import Path
@@ -18,7 +17,24 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # if current_dir not in sys.path:
 #     sys.path.append(current_dir)
 
-# 直接使用torchaudio功能，不再导入额外函数
+
+def _load_audio_file(file_path):
+    """
+    加载音频文件，返回 (waveform[C, T] float32, sample_rate)。
+    torchaudio 2.6+ 的 load/save 已迁移到 TorchCodec（Windows 上缺 FFmpeg 时不可用），
+    所以这里优先用 soundfile（支持 wav/flac/ogg/mp3），失败再用 librosa 兜底。
+    """
+    try:
+        import soundfile as sf
+        data, sr = sf.read(file_path, dtype="float32", always_2d=True)  # (T, C)
+        waveform = torch.from_numpy(data.T.copy())  # (C, T)
+        return waveform, int(sr)
+    except Exception:
+        import librosa
+        data, sr = librosa.load(file_path, sr=None, mono=False)
+        if data.ndim == 1:
+            data = data[None, :]
+        return torch.from_numpy(data), int(sr)
 
 class TimbreAudioLoader:
     """
@@ -115,8 +131,8 @@ class TimbreAudioLoader:
         file_path = os.path.join(timbre_dir, audio_file)
         
         try:
-            # 使用torchaudio加载音频
-            waveform, sample_rate = torchaudio.load(file_path)
+            # torchaudio 2.6+ 在 Windows 上需要 TorchCodec，改用 soundfile/librosa 加载
+            waveform, sample_rate = _load_audio_file(file_path)
             
             # 返回ComfyUI音频格式
             return ({"waveform": waveform.unsqueeze(0), "sample_rate": sample_rate}, )
@@ -136,7 +152,7 @@ class TimbreAudioLoader:
         
         # 如果选择了有效的音频文件，返回文件路径作为变化标识
         if audio_file != "无音频文件":
-            timbre_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(current_dir))), "models", "Index-TTS", "timbre")
+            timbre_dir = os.path.join(current_dir, "TimbreModel")
             file_path = os.path.join(timbre_dir, audio_file)
             
             # 检查文件是否存在
@@ -169,8 +185,8 @@ class RefreshTimbreAudio:
     
     def refresh(self, refresh):
         if refresh:
-            # 定义Timbre模型目录路径
-            timbre_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(current_dir))), "models", "Index-TTS", "timbre")
+            # 定义Timbre模型目录路径（与 TimbreAudioLoader 一致）
+            timbre_dir = os.path.join(current_dir, "TimbreModel")
             
             # 刷新TimbreAudioLoader中的缓存
             TimbreAudioLoader.scan_audio_files(timbre_dir)
