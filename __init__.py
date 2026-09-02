@@ -35,6 +35,13 @@ from .index_tts2_5_nodes import (
     IndexTTS25EmotionTextNode,
     IndexTTS25CacheControlNode,
 )
+# IndexTTS-2.5 持久化音色 conditioning 节点
+from .index_tts2_5_voice_nodes import (
+    IndexTTS25ExtractVoiceNode,
+    IndexTTS25SaveVoiceNode,
+    IndexTTS25LoadVoiceNode,
+    IndexTTS25VoiceBaseNode,
+)
 
 # 注册ComfyUI节点
 NODE_CLASS_MAPPINGS = {
@@ -56,6 +63,11 @@ NODE_CLASS_MAPPINGS = {
     "IndexTTS25EmotionVectorNode": IndexTTS25EmotionVectorNode,
     "IndexTTS25EmotionTextNode": IndexTTS25EmotionTextNode,
     "IndexTTS25CacheControlNode": IndexTTS25CacheControlNode,
+    # IndexTTS-2.5 持久化音色节点
+    "IndexTTS25ExtractVoiceNode": IndexTTS25ExtractVoiceNode,
+    "IndexTTS25SaveVoiceNode": IndexTTS25SaveVoiceNode,
+    "IndexTTS25LoadVoiceNode": IndexTTS25LoadVoiceNode,
+    "IndexTTS25VoiceBaseNode": IndexTTS25VoiceBaseNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -70,13 +82,21 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "IndexTTS2EmotionVectorNode": "Index TTS 2 - Emotion Vector",
     "IndexTTS2EmotionTextNode": "Index TTS 2 - Emotion Text",
     "IndexTTS2CacheControlNode": "Index TTS 2 - Cache Control",
-    "IndexTTS2ProNode": "Index TTS 2 Pro (小说多角色)",  # TTS2多角色小说朗读节点
+    "IndexTTS2ProNode": "Index TTS 2 Pro (小说多角色)",  # TTS2多角色小说朗读节点显示名称
     # IndexTTS-2.5 节点显示名
     "IndexTTS25BaseNode": "Index TTS 2.5 - Base (多语言/语速)",
     "IndexTTS25EmotionAudioNode": "Index TTS 2.5 - Emotion Audio",
     "IndexTTS25EmotionVectorNode": "Index TTS 2.5 - Emotion Vector",
     "IndexTTS25EmotionTextNode": "Index TTS 2.5 - Emotion Text",
     "IndexTTS25CacheControlNode": "Index TTS 2.5 - Cache Control",
+    # IndexTTS-2.5 持久化音色节点显示名
+    "IndexTTS25ExtractVoiceNode": "Index TTS 2.5 - Extract Voice",
+    "IndexTTS25SaveVoiceNode": "Index TTS 2.5 - Save Voice",
+    "IndexTTS25LoadVoiceNode": "Index TTS 2.5 - Load Voice",
+    "IndexTTS25VoiceBaseNode": "Index TTS 2.5 - Voice Base",
 }
 
-__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
+# 前端扩展：为 Load Voice 提供 .pt 文件选择/上传和动态刷新。
+WEB_DIRECTORY = "./web"
+
+__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS', 'WEB_DIRECTORY']
